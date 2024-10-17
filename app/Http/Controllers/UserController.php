@@ -19,8 +19,6 @@ class UserController extends Controller
                 #'city'=> 'required',
             ]);
 
-            
-            
             User::create([
                 'name' => $incomingFields['name'],
                 'cpf' => $incomingFields['cpf'],
@@ -29,10 +27,44 @@ class UserController extends Controller
                 'phone' => $incomingFields['phone'],
                 'address' => $incomingFields['address'],
                 
-            ]);
+            ]);            
+            return redirect('home');
+    }
+
+    public function editUser(Request $request, User $user)
+    {
         
-            
-            return $incomingFields['cpf'];
+        $incomingFields = $request->validate([
+            'name' => 'required',
+            'cpf' => 'required',
+            'birthdate' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'address' => 'required',
+            // 'state' => 'required',
+            // 'city' => 'required',
+        ]);
+    
+       
+        $user->update([
+
+            'name' => $incomingFields['name'],
+            'cpf' => $incomingFields['cpf'],
+            'birthdate' => $incomingFields['birthdate'],
+            'email' => $incomingFields['email'],
+            'phone' => $incomingFields['phone'],
+            'address' => $incomingFields['address'],
+        ]);
+    
+        
+            return redirect('home');
+    }
+    
+
+    public function deleteUser(User $user){
+        $user -> delete();
+        return redirect('home');
+
     }
 
 }

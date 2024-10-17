@@ -4,69 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <title>Document</title>
 </head>
 <body>
+    <main class="container">
+        <div class="my-4">
+            <h2>Listar todos os usuários</h2>
+        </div>
+        
+        @foreach ($users as $user)
+            <div class="border p-3 mb-3">
+                <h3>Nome: {{$user['name']}}</h3>
+                <p>CPF: {{$user['cpf']}}</p>
+                <p>Email: {{$user['email']}}</p>
+                <p>Data de Nascimento: {{$user['birthdate']}}</p>
+                <p>Telefone: {{$user['phone']}}</p>
+                <p>Endereço: {{$user['address']}}</p>
+                <p>Cidade: {{$user['city']}}</p>
+                <p>Estado: {{$user['state']}}</p>
 
-      <div class="container">
-        <h1 class="mt-4">Cadastro de Usuários</h1>
-        <div class="mt-8">
-            <form method="POST" action="/register">
-                @csrf
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editUserModal{{$user->id}}">
+                    Editar
+                </button>
 
-                <div class="form-group">
-                    <label for="nome">Nome:</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
+                <!-- Edit modal -->
+                <div class="modal fade" id="editUserModal{{$user->id}}" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editUserModalLabel">Editar Usuário</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/editUser/{{$user->id}}" method="POST">
+                                    @csrf
+                                    @method('PUT')
 
-                <div class="form-group">
-                    <label for="cpf">CPF:</label>
-                    <input type="text" class="form-control" id="cpf" name="cpf" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="birthdate">Data de Nascimento:</label>
-                    <input type="date" class="form-control" id="birthdate" name="birthdate" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">Telefone:</label>
-                    <input type="text" class="form-control" id="phone" name="phone" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="address">Endereço:</label>
-                    <input type="text" class="form-control" id="address" name="address" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="state">Estado:</label>
-                    <!--Remember to add the required arugument -->
-                    <select class="form-control" id="state" name="state" >
-                        <!-- Aqui ficariam as opções de estados -->
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Nome:</label>
+                                        <input type="text" class="form-control" id="name" name="name" value="{{$user->name}}" required>
+                                    </div>
                     
-                            <option value=""></option>
-                        
-                    </select>
+                                    <div class="mb-3">
+                                        <label for="cpf" class="form-label">CPF:</label>
+                                        <input type="text" class="form-control" id="cpf" name="cpf" value="{{$user->cpf}}" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="birthdate" class="form-label">Data de Nascimento:</label>
+                                        <input type="date" class="form-control" id="birthdate" name="birthdate" value="{{$user->birthdate}}" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email:</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="{{$user->email}}" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Telefone:</label>
+                                        <input type="text" class="form-control" id="phone" name="phone" value="{{$user->phone}}" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label">Endereço:</label>
+                                        <input type="text" class="form-control" id="address" name="address" value="{{$user->address}}" required>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Salvar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="city">Cidade:</label>
-                    <!--Remember to add the required arugument -->
-                    <select class="form-control" id="city" name="city" >
-                        <!--aqui ficariam as opções de cidedes baseadas na UF do esatado -->
-                    </select>
-                </div>
+                <form action="/delete-user/{{$user->id}}" method="POST" class="mt-2">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Deletar</button>
+                </form>
+            </div>  
+        @endforeach
+    </main>
 
-                <button type="submit" class="btn btn-primary">Cadastrar</button>
-            </form>
-        </div>    
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
