@@ -2,11 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\User;
 
 class UserController extends Controller
 {
+    public function getStates()
+    {
+        $response = Http::get('https://servicodados.ibge.gov.br/api/v1/localidades/estados');
+        return response()->json($response->json());
+    }
+
+    public function getCities($id)
+    {
+        $response = Http::get("https://servicodados.ibge.gov.br/api/v1/localidades/estados/{$id}/municipios");
+        return response()->json($response->json());
+    }
+
+
+
+
     public function register(Request $request){
         $incomingFields = $request -> validate(
             [   'name'=>'required',
@@ -15,8 +31,8 @@ class UserController extends Controller
                 'email'=> 'required',
                 'phone'=> 'required',
                 'address'=> 'required',
-                #'state'=> 'required',
-                #'city'=> 'required',
+                'state'=> 'required',
+                'city'=> 'required',
             ]);
 
             User::create([
@@ -26,6 +42,8 @@ class UserController extends Controller
                 'email' => $incomingFields['email'],
                 'phone' => $incomingFields['phone'],
                 'address' => $incomingFields['address'],
+                'state' => $incomingFields['state'],
+                'city' => $incomingFields['city'],
                 
             ]);            
             return redirect('home');
@@ -41,8 +59,8 @@ class UserController extends Controller
             'email' => 'required|email',
             'phone' => 'required',
             'address' => 'required',
-            // 'state' => 'required',
-            // 'city' => 'required',
+            'state' => 'required',
+            'city' => 'required',
         ]);
     
        
@@ -54,6 +72,8 @@ class UserController extends Controller
             'email' => $incomingFields['email'],
             'phone' => $incomingFields['phone'],
             'address' => $incomingFields['address'],
+            'state' => $incomingFields['state'],
+            'city' => $incomingFields['city'],
         ]);
     
         

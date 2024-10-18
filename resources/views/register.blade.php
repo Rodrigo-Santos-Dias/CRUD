@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
 </head>
 <body>
     <div class="container">
@@ -45,20 +46,15 @@
 
                 <div class="form-group">
                     <label for="state">Estado:</label>
-                    <!--Remember to add the required arugument -->
-                    <select class="form-control" id="state" name="state" >
-                        <!-- Aqui ficariam as opções de estados -->
-                    
-                            <option value=""></option>
-                        
+                    <select class="form-control" id="state" name="state" required>
+                        <option value="">Selecione o estado</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="city">Cidade:</label>
-                    <!--Remember to add the required arugument -->
-                    <select class="form-control" id="city" name="city" >
-                        <!--aqui ficariam as opções de cidedes baseadas na UF do esatado -->
+                    <select class="form-control" id="city" name="city" required>
+                        <option value="">Selecione a cidade</option>
                     </select>
                 </div>
 
@@ -66,5 +62,31 @@
             </form>
         </div>    
     </div>
+
+    <script>
+        $(document).ready(function() {
+            
+            $.get('/estados', function(data) {
+                $('#state').append(data.map(function(state) {
+                    return `<option value="${state.id}">${state.nome}</option>`;
+                }));
+            });
+
+            // Carregar cidades ao selecionar um estado
+            $('#state').on('change', function() {
+                var state = $(this).val();
+                if (state) {
+                    $.get(`/estados/${state}/cidades`, function(data) {
+                        $('#city').empty().append('<option value="">Selecione a cidade</option>');
+                        $('#city').append(data.map(function(city) {
+                            return `<option value="${city.nome}">${city.nome}</option>`;
+                        }));
+                    });
+                } else {
+                    $('#city').empty().append('<option value="">Selecione a cidade</option>');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

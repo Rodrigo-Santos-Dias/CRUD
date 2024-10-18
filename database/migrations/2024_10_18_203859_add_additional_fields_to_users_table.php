@@ -12,11 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('cpf')->unique(); // CPF (com restrição de unicidade)
-            $table->date('birthdate'); // Data de nascimento
-            $table->string('phone'); // Telefone
-            $table->string('address');
-            $table->string('password')->nullable()->change(); // Endereço
+            $table->string('state'); // Telefone
+            $table->string('city');
         });
     }
 
@@ -26,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-           $table->dropColumn(['cpf', 'birthdate', 'phone', 'address']);
-        }); 
+            $table->dropColumn(['state', 'city']);
+        });
     }
 };

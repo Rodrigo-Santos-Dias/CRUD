@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
     <title>Document</title>
 </head>
 <body>
@@ -29,11 +30,11 @@
                 </button>
 
                 <!-- Edit modal -->
-                <div class="modal fade" id="editUserModal{{$user->id}}" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                <div class="modal fade" id="editUserModal{{$user->id}}" tabindex="-1" aria-labelledby="editUserModalLabel{{$user->id}}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editUserModalLabel">Editar Usuário</h5>
+                                <h5 class="modal-title" id="editUserModalLabel{{$user->id}}">Editar Usuário</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -42,33 +43,47 @@
                                     @method('PUT')
 
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Nome:</label>
-                                        <input type="text" class="form-control" id="name" name="name" value="{{$user->name}}" required>
+                                        <label for="name{{$user->id}}" class="form-label">Nome:</label>
+                                        <input type="text" class="form-control" id="name{{$user->id}}" name="name" value="{{$user->name}}" required>
                                     </div>
                     
                                     <div class="mb-3">
-                                        <label for="cpf" class="form-label">CPF:</label>
-                                        <input type="text" class="form-control" id="cpf" name="cpf" value="{{$user->cpf}}" required>
+                                        <label for="cpf{{$user->id}}" class="form-label">CPF:</label>
+                                        <input type="text" class="form-control" id="cpf{{$user->id}}" name="cpf" value="{{$user->cpf}}" required>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="birthdate" class="form-label">Data de Nascimento:</label>
-                                        <input type="date" class="form-control" id="birthdate" name="birthdate" value="{{$user->birthdate}}" required>
+                                        <label for="birthdate{{$user->id}}" class="form-label">Data de Nascimento:</label>
+                                        <input type="date" class="form-control" id="birthdate{{$user->id}}" name="birthdate" value="{{$user->birthdate}}" required>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email:</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="{{$user->email}}" required>
+                                        <label for="email{{$user->id}}" class="form-label">Email:</label>
+                                        <input type="email" class="form-control" id="email{{$user->id}}" name="email" value="{{$user->email}}" required>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="phone" class="form-label">Telefone:</label>
-                                        <input type="text" class="form-control" id="phone" name="phone" value="{{$user->phone}}" required>
+                                        <label for="phone{{$user->id}}" class="form-label">Telefone:</label>
+                                        <input type="text" class="form-control" id="phone{{$user->id}}" name="phone" value="{{$user->phone}}" required>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="address" class="form-label">Endereço:</label>
-                                        <input type="text" class="form-control" id="address" name="address" value="{{$user->address}}" required>
+                                        <label for="address{{$user->id}}" class="form-label">Endereço:</label>
+                                        <input type="text" class="form-control" id="address{{$user->id}}" name="address" value="{{$user->address}}" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="state{{$user->id}}">Estado:</label>
+                                        <select class="form-control" id="state{{$user->id}}" name="state" required>
+                                            <option value="">Selecione o estado</option>
+                                        </select>
+                                    </div>
+                    
+                                    <div class="form-group">
+                                        <label for="city{{$user->id}}">Cidade:</label>
+                                        <select class="form-control" id="city{{$user->id}}" name="city" required>
+                                            <option value="">Selecione a cidade</option>
+                                        </select>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary">Salvar</button>
@@ -86,6 +101,33 @@
             </div>  
         @endforeach
     </main>
+
+    <script>
+        $(document).ready(function() {
+            
+            @foreach ($users as $user)
+                $.get('/estados', function(data) {
+                    $('#state{{$user->id}}').append(data.map(function(state) {
+                        return `<option value="${state.id}">${state.nome}</option>`;
+                    }));
+                });
+
+                $('#state{{$user->id}}').on('change', function() {
+                    var stateId = $(this).val();
+                    if (stateId) {
+                        $.get(`/estados/${stateId}/cidades`, function(data) {
+                            $('#city{{$user->id}}').empty().append('<option value="">Selecione a cidade</option>');
+                            $('#city{{$user->id}}').append(data.map(function(city) {
+                                return `<option value="${city.nome}">${city.nome}</option>`;
+                            }));
+                        });
+                    } else {
+                        $('#city{{$user->id}}').empty().append('<option value="">Selecione a cidade</option>');
+                    }
+                });
+            @endforeach
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
